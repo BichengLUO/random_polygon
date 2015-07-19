@@ -20,6 +20,11 @@ void swap(point ps[], int i, int j);
 void space_partion_rec(point ps[], int count, int l, int r);
 void space_partition(point ps[], int count);
 
+//Usage: ./random_polygon.exe [count] [mean] [stddev] [output_file]
+// [count] means the number of the points
+// [mean] the mean value for normal-distributed random points
+// [stddev] the standard devirants for normal-distributed random points
+// [output_file] the output file path for simple polygon points
 int main(int argc, char *argv[])
 {
 	int count = atoi(argv[1]);
@@ -36,6 +41,9 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+//Space Partitioning algorithm from "Heuristics for the Generation of Random Polygons, T. Auer & M. Held"
+// The worst case is O(n^2)
+// The best case is O(nlgn)
 void space_partition(point ps[], int count)
 {
 	int first = 0;
@@ -109,6 +117,7 @@ point random_point_on_segment(const point &s, const point &e)
 	return point(s.x + (e.x - s.x) * rand_ratio, s.y + (e.y - s.y) * rand_ratio);
 }
 
+//Random ponints generated according to normal distribution
 void random_points(point ps[], int count, double mean, double stddev)
 {
 	std::random_device rd;
