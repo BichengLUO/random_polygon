@@ -20,13 +20,21 @@ void swap(point ps[], int i, int j);
 void space_partion_rec(point ps[], int count, int l, int r);
 void space_partition(point ps[], int count);
 
-//Usage: ./random_polygon.exe [count] [mean] [stddev] [output_file]
+const char *usage = "Usage: random_polygon.exe [count] [mean] [stddev] [output_file]";
+
+//Usage: random_polygon.exe [count] [mean] [stddev] [output_file]
 // [count] means the number of the points
 // [mean] the mean value for normal-distributed random points
 // [stddev] the standard devirants for normal-distributed random points
 // [output_file] the output file path for simple polygon points
 int main(int argc, char *argv[])
 {
+	if (argc != 5)
+	{
+		std::cout << usage << std::endl;
+		return -1;
+	}
+
 	int count = atoi(argv[1]);
 	double mean = atof(argv[2]);
 	double stddev = atof(argv[3]);
