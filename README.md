@@ -15,4 +15,9 @@ random_polygon.exe [count] [mean] [stddev] [output_file]
 > - [stddev] the standard devirants for normal-distributed random points
 > - [output_file] the output file path for simple polygon points
 
+Examples
+------------------
+Here are several examples which showing the results of this random simple polygon generator:
+![Examples](/images/random_polygon.png)
+
 [1]:http://www.cccg.ca/proceedings/1996/cccg1996_0007.pdf
