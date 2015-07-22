@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <random>
+#include <ctime>
 
 typedef struct _point
 {
@@ -29,6 +30,7 @@ const char *usage = "Usage: random_polygon.exe [count] [mean] [stddev] [output_f
 // [output_file] the output file path for simple polygon points
 int main(int argc, char *argv[])
 {
+	srand(time(NULL));
 	if (argc != 5)
 	{
 		std::cout << usage << std::endl;
