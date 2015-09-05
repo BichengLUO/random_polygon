@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 	point *ps = new point[count];
 	random_points(ps, count, mean, stddev);
 	space_partition(ps, count);
+	file << count << std::endl;
 	for (int i = 0; i < count; i++)
 		file << ps[i].x << " " << ps[i].y << std::endl;
 	delete[] ps;
