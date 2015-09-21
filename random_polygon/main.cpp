@@ -14,24 +14,25 @@ typedef struct _point
 } point;
 
 double randf();
-void random_points(point ps[], int count, double min, double max);
+void random_points(point ps[], int count, double min, double max, bool integer = false);
 point random_point_on_segment(const point &s, const point &e);
 bool to_left(const point &s, const point &e, const point &p);
 void swap(point ps[], int i, int j);
 void space_partion_rec(point ps[], int count, int l, int r);
 void space_partition(point ps[], int count);
 
-const char *usage = "Usage: random_polygon.exe [count] [mean] [stddev] [output_file]";
+const char *usage = "Usage: random_polygon.exe [count] [mean] [stddev] [output_file] [output_format]";
 
-//Usage: random_polygon.exe [count] [mean] [stddev] [output_file]
+//Usage: random_polygon.exe [count] [mean] [stddev] [output_file] [output_format]
 // [count] means the number of the points
 // [mean] the mean value for normal-distributed random points
 // [stddev] the standard devirants for normal-distributed random points
 // [output_file] the output file path for simple polygon points
+// [output_format] the output format for float number or integers
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
-	if (argc != 5)
+	if (argc != 6)
 	{
 		std::cout << usage << std::endl;
 		return -1;
@@ -41,13 +42,26 @@ int main(int argc, char *argv[])
 	double mean = atof(argv[2]);
 	double stddev = atof(argv[3]);
 	std::ofstream file(argv[4], std::ofstream::out);
+	bool integer = false;
+	if (strcmp(argv[5], "double") == 0)
+		integer = false;
+	else if (strcmp(argv[5], "int") == 0)
+		integer = true;
 
 	point *ps = new point[count];
-	random_points(ps, count, mean, stddev);
+	random_points(ps, count, mean, stddev, integer);
 	space_partition(ps, count);
 	file << count << std::endl;
-	for (int i = 0; i < count; i++)
-		file << ps[i].x << " " << ps[i].y << std::endl;
+	if (integer)
+	{
+		for (int i = 0; i < count; i++)
+			file << (int)ps[i].x << " " << (int)ps[i].y << std::endl;
+	}
+	else
+	{
+		for (int i = 0; i < count; i++)
+			file << ps[i].x << " " << ps[i].y << std::endl;
+	}
 	delete[] ps;
 	return 0;
 }
@@ -129,13 +143,21 @@ point random_point_on_segment(const point &s, const point &e)
 }
 
 //Random ponints generated according to normal distribution
-void random_points(point ps[], int count, double mean, double stddev)
+void random_points(point ps[], int count, double mean, double stddev, bool integer)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::normal_distribution<> d(mean, stddev);
-	for (int i = 0; i < count; i++)
-		ps[i] = point(d(gen), d(gen));
+	if (integer)
+	{
+		for (int i = 0; i < count; i++)
+			ps[i] = point(round(d(gen)), round(d(gen)));
+	}
+	else
+	{
+		for (int i = 0; i < count; i++)
+			ps[i] = point(d(gen), d(gen));
+	}
 }
 
 double randf()
