@@ -4,6 +4,7 @@
 #include <fstream>
 #include <random>
 #include <ctime>
+#include <set>
 
 typedef struct _point
 {
@@ -15,20 +16,16 @@ typedef struct _point
 
 double randf();
 void random_points(point ps[], int count, double min, double max, bool integer = false);
+void random_points_normal(point ps[], int count, double mean, double stddev, bool integer = false);
 point random_point_on_segment(const point &s, const point &e);
 bool to_left(const point &s, const point &e, const point &p);
 void swap(point ps[], int i, int j);
 void space_partion_rec(point ps[], int count, int l, int r);
 void space_partition(point ps[], int count);
 
-const char *usage = "Usage: random_polygon.exe [count] [mean] [stddev] [output_file] [output_format]";
+const char *usage = "Usage: random_polygon.exe [count] [min] [max] [output_file] [output_format]";
 
-//Usage: random_polygon.exe [count] [mean] [stddev] [output_file] [output_format]
-// [count] means the number of the points
-// [mean] the mean value for normal-distributed random points
-// [stddev] the standard devirants for normal-distributed random points
-// [output_file] the output file path for simple polygon points
-// [output_format] the output format for float number or integers
+
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
@@ -39,8 +36,8 @@ int main(int argc, char *argv[])
 	}
 
 	int count = atoi(argv[1]);
-	double mean = atof(argv[2]);
-	double stddev = atof(argv[3]);
+	double min = atof(argv[2]);
+	double max = atof(argv[3]);
 	std::ofstream file(argv[4], std::ofstream::out);
 	bool integer = false;
 	if (strcmp(argv[5], "double") == 0)
@@ -49,7 +46,7 @@ int main(int argc, char *argv[])
 		integer = true;
 
 	point *ps = new point[count];
-	random_points(ps, count, mean, stddev, integer);
+	random_points(ps, count, min, max, integer);
 	space_partition(ps, count);
 	file << count << std::endl;
 	if (integer)
@@ -142,16 +139,54 @@ point random_point_on_segment(const point &s, const point &e)
 	return point(s.x + (e.x - s.x) * rand_ratio, s.y + (e.y - s.y) * rand_ratio);
 }
 
+void random_points(point ps[], int count, double min, double max, bool integer)
+{
+	std::set<std::pair<int, int>> points_set;
+	if (integer)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			bool unique = true;
+			int x, y;
+			do
+			{
+				x = (int)round(min + (max - min) * randf());
+				y = (int)round(min + (max - min) * randf());
+				if (points_set.find(std::make_pair(x, y)) != points_set.end())
+					unique = false;
+			} while (!unique);
+			ps[i] = point(x, y);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < count; i++)
+			ps[i] = point(min + (max - min) * randf(), min + (max - min) * randf());
+	}
+}
+
 //Random ponints generated according to normal distribution
-void random_points(point ps[], int count, double mean, double stddev, bool integer)
+void random_points_normal(point ps[], int count, double mean, double stddev, bool integer)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::normal_distribution<> d(mean, stddev);
+	std::set<std::pair<int, int>> points_set;
 	if (integer)
 	{
 		for (int i = 0; i < count; i++)
-			ps[i] = point(round(d(gen)), round(d(gen)));
+		{
+			bool unique = true;
+			int x, y;
+			do
+			{
+				x = (int)round(d(gen));
+				y = (int)round(d(gen));
+				if (points_set.find(std::make_pair(x, y)) != points_set.end())
+					unique = false;
+			} while (!unique);
+			ps[i] = point(x, y);
+		}
 	}
 	else
 	{
