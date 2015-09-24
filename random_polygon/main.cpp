@@ -14,6 +14,7 @@ typedef struct _point
 	_point(double xp, double yp) : x(xp), y(yp){}
 } point;
 
+
 double randf();
 void random_points(point ps[], int count, double min, double max, bool integer = false);
 void random_points_normal(point ps[], int count, double mean, double stddev, bool integer = false);
@@ -156,6 +157,7 @@ void random_points(point ps[], int count, double min, double max, bool integer)
 					unique = false;
 			} while (!unique);
 			ps[i] = point(x, y);
+			points_set.insert(std::make_pair(x, y));
 		}
 	}
 	else
@@ -186,6 +188,7 @@ void random_points_normal(point ps[], int count, double mean, double stddev, boo
 					unique = false;
 			} while (!unique);
 			ps[i] = point(x, y);
+			points_set.insert(std::make_pair(x, y));
 		}
 	}
 	else
